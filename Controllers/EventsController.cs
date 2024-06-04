@@ -2,17 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 public class EventsController : Controller
 {
-    static private List<string> Events = new List<string>{"Gundam Build Night", "Salsa Class", "Bike Ride"};
 
     // GET: <port>/events
     [HttpGet]
     public IActionResult Index() 
     {
         
-        ViewBag.events = Events;
+        ViewBag.events = EventData.GetAll();
         return View();
 
     }
+
     // Get: <port>/events/add
     [HttpGet]
     public IActionResult Add()
@@ -22,9 +22,29 @@ public class EventsController : Controller
 
     [HttpPost]
     [Route("/Events/Add")]
-    public IActionResult NewEvent(string name)
+    public IActionResult NewEvent(Event newEvent)
     {
-        Events.Add(name);
+        EventData.Add(newEvent);
+        
         return Redirect("/Events");
     }
+
+    [HttpGet]
+    public IActionResult Delete()
+    {
+        ViewBag.events = EventData.GetAll();
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Delete(int[] eventIds)
+    {
+        foreach (int eventId in eventIds)
+        {
+            EventData.Remove(eventId);
+        }
+        return Redirect("/Events");
+    }
+
+
 }
