@@ -25,7 +25,7 @@ public class EventsController : Controller
     public IActionResult NewEvent(Event newEvent)
     {
         EventData.Add(newEvent);
-        
+
         return Redirect("/Events");
     }
 
@@ -44,6 +44,28 @@ public class EventsController : Controller
             EventData.Remove(eventId);
         }
         return Redirect("/Events");
+    }
+
+    [HttpPost]
+    [Route("/event/edit/{eventId}")]
+    public IActionResult Edit (int eventId)
+    {
+       Event editEvent = EventData.GetById(eventId);
+       ViewBag.eventToEdit = editEvent;
+       ViewBag.title = "Edit Event "+ editEvent.Name + "(id = "+editEvent.Id + ")";
+
+        return View();
+    }
+
+    [HttpPost]
+    [Route("/events/edit")]
+    public IActionResult SubmitEditEventForm(int eventId, string name, string description)
+    {
+        Event editEvent = EventData.GetById(eventId);
+        editEvent.Name = name;
+        editEvent.Description = description;
+
+        return Redirect("/events");
     }
 
 
