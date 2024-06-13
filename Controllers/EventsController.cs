@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Coding_Events.Data;
 using Coding_Events.Models;
+using Coding_Events.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 public class EventsController : Controller
 {
@@ -17,8 +19,8 @@ public class EventsController : Controller
     [HttpGet]
     public IActionResult Index() 
     {
-        
-        List<Event> events = context.Events.ToList();
+        List<Event> events = context.Events.Include(e=>e.Category).ToList();
+
         return View(events);
 
     }
@@ -27,18 +29,32 @@ public class EventsController : Controller
     [HttpGet]
     public IActionResult Add()
     {
-        return View();
+        List<EventCategory> categories = context.Categories.ToList();
+        AddEventViewModel addEventViewModel = new AddEventViewModel(categories);
+        return View( addEventViewModel);
+        
     }
 
     [HttpPost]
     [Route("/Events/Add")]
-    public IActionResult NewEvent(Event newEvent)
+    public IActionResult NewEvent(AddEventViewModel addEventViewModel)
     {
-        // EventData.Add(newEvent);
-        context.Events.Add(newEvent);
-        context.SaveChanges();
+        if(ModelState.IsValid)
+        {
+            EventCategory theCategory = context.Categories.Find(addEventViewModel.CategoryId);
+            Event newEvent= new Event
+            {
+                Name = addEventViewModel.Name,
+                Description = addEventViewModel.Description,
+                Category = theCategory
+            }; 
+            
+            context.Events.Add(newEvent);
+            context.SaveChanges();
 
-        return Redirect("/Events");
+            return Redirect("/Events");
+        }
+        return View(addEventViewModel);
     }
 
     [HttpGet]
@@ -53,8 +69,13 @@ public class EventsController : Controller
     {
         foreach (int eventId in eventIds)
         {
+            
             Event? theEvent = context.Events.Find(eventId);
+            
+            if(theEvent!=null)
+            {
             context.Events.Remove(theEvent);
+            }
         }
 
         context.SaveChanges();

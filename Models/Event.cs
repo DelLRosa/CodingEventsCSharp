@@ -4,6 +4,9 @@ public class Event
 {
     public string? Name {get; set;}
     public string? Description { get; set; }
+
+    public EventCategory? Category {get; set;}
+    public int CategoryId {get;set;}
     public int Id {get; set;}
 
     public Event()
@@ -15,7 +18,7 @@ public class Event
         Description = description;
     }
 
-    public override string ToString()
+    public override string? ToString()
     {
         return Name;
     }
