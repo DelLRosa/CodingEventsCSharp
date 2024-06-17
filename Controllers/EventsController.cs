@@ -93,6 +93,23 @@ public class EventsController : Controller
 
     //     return View();
     // }
+    [HttpGet]
+  
+    public IActionResult Detail(int id)
+    {
+        Event theEvent = context.Events
+        .Include(e => e.Category)
+        .Include(e => e.Tags)
+        .SingleOrDefault(e => e.Id == id);
+ 
+    if (theEvent == null)
+    {
+        return NotFound(); 
+    }
+
+    EventDetailViewModel viewModel = new EventDetailViewModel(theEvent);
+    return View(viewModel);
+    }
 
 
 }

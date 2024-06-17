@@ -9,6 +9,8 @@ public class Event
     public int CategoryId {get;set;}
     public int Id {get; set;}
 
+    public ICollection<Tag>? Tags { get; set; }
+
     public Event()
     {
     }
@@ -16,6 +18,7 @@ public class Event
     {
         Name = name;
         Description = description;
+        Tags = new List<Tag>();
     }
 
     public override string? ToString()
